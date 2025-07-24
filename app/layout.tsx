@@ -1,3 +1,5 @@
+import { Analytics } from '@vercel/analytics/react';
+
 import './globals.css'
 import { Inter } from 'next/font/google'
 import Navbar from '../components/Navbar'
@@ -15,6 +17,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={inter.className}>
         <Navbar />
         <main className="max-w-4xl mx-auto p-6">{children}</main>
+        <Analytics />
       </body>
     </html>
   )
