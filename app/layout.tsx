@@ -1,4 +1,4 @@
-import { Analytics } from '@vercel/analytics/react';
+import { Analytics } from '@vercel/analytics/react'
 
 import './globals.css'
 import { Inter } from 'next/font/google'
@@ -14,9 +14,9 @@ export const metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} bg-gray-50 text-gray-900`}>
         <Navbar />
-        <main className="max-w-4xl mx-auto p-6">{children}</main>
+        <main>{children}</main>
         <Analytics />
       </body>
     </html>
