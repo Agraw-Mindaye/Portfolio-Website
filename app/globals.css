@@ -14,7 +14,6 @@
 
 /* Dark mode support temporarily disabled */
 
-
 body {
   background: var(--background);
   color: var(--foreground);

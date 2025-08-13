@@ -1,6 +1,6 @@
 # Portfolio Website
 
-This is my personal portfolio site, built to showcase my full-stack development work, skills, and background. 
+This is my personal portfolio site, built to showcase my full-stack development work, skills, and background.
 
 ## Live Site:
 
@@ -11,5 +11,5 @@ This is my personal portfolio site, built to showcase my full-stack development 
 - Responsive design for desktop and mobile
 - Project showcase with links and descriptions
 - Contact form for inquiries
-- Built with Next.js and TypeScript  
+- Built with Next.js and TypeScript
 - Deployed with Vercel
