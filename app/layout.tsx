@@ -8,8 +8,8 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="overflow-x-hidden">
-      <body className={`${inter.variable} font-sans bg-background text-foreground overflow-x-hidden`}>
+    <html lang="en" className="overflow-x-hidden overflow-y-auto">
+      <body className={`${inter.variable} font-sans bg-background text-foreground overflow-x-hidden overflow-y-auto`}>
         <Navbar />
         <main>{children}</main>
         <Analytics />
