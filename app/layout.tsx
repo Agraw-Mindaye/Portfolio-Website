@@ -1,20 +1,15 @@
 import { Analytics } from '@vercel/analytics/react'
-
-import './globals.css'
 import { Inter } from 'next/font/google'
-import Navbar from '../components/Navbar'
 
-const inter = Inter({ subsets: ['latin'] })
+import Navbar from '@/components/Navbar'
+import '@/app/globals.css'
 
-export const metadata = {
-  title: 'Portfolio',
-  description: 'My developer portfolio',
-}
+const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className="overflow-x-hidden">
-      <body className={`${inter.className} overflow-x-hidden bg-gray-50 text-gray-900`}>
+      <body className={`${inter.variable} font-sans bg-background text-foreground overflow-x-hidden`}>
         <Navbar />
         <main>{children}</main>
         <Analytics />
