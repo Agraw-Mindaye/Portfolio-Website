@@ -15,11 +15,20 @@ const eslintConfig = [
   ...compat.extends('next/core-web-vitals', 'next/typescript'),
 
   {
+    name: 'custom-rules',
+    rules: {
+      'react/no-unescaped-entities': 'off',
+    },
+  },
+
+  {
     name: 'prettier',
     rules: {
       ...prettier.rules,
     },
   },
 ]
+
+
 
 export default eslintConfig
