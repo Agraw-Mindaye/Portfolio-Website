@@ -122,11 +122,6 @@ export default function About() {
             ))}
           </div>
         </div>
-
-        {/* Footer Note */}
-        <p className="mt-12 text-sm sm:text-base max-w-xl mx-auto text-center text-gray-500 italic">
-          In progress — more content coming soon.
-        </p>
       </div>
     </section>
   )
