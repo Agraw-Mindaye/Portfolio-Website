@@ -17,12 +17,25 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-sans, ui-sans-serif, system-ui, -apple-system, Segoe UI,
-                   Roboto, Noto Sans, Ubuntu, Cantarell, Helvetica Neue, Arial, sans-serif);
+  font-family: var(
+    --font-sans,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    Segoe UI,
+    Roboto,
+    Noto Sans,
+    Ubuntu,
+    Cantarell,
+    Helvetica Neue,
+    Arial,
+    sans-serif
+  );
 }
 
 /* Optional: guard against stray horizontal scroll from child elements */
-html, body {
+html,
+body {
   width: 100%;
   overflow-x: hidden;
 }
@@ -30,10 +43,10 @@ html, body {
 /* Tailwind v4: custom responsive breakpoints */
 @theme inline {
   /* Keep Tailwind defaults */
-  --breakpoint-sm: 640px;   /* phones -> small tablets */
-  --breakpoint-md: 768px;   /* tablet portrait */
-  --breakpoint-lg: 1024px;  /* tablet landscape / small laptop */
-  --breakpoint-xl: 1280px;  /* desktop */
+  --breakpoint-sm: 640px; /* phones -> small tablets */
+  --breakpoint-md: 768px; /* tablet portrait */
+  --breakpoint-lg: 1024px; /* tablet landscape / small laptop */
+  --breakpoint-xl: 1280px; /* desktop */
   --breakpoint-2xl: 1536px; /* large desktop */
 
   /* Add two helpful big-screen breakpoints */
@@ -41,7 +54,7 @@ html, body {
   --breakpoint-4xl: 2560px; /* 1440p/4K monitors */
 
   /* (Optional) ultra-small phones */
-  --breakpoint-xs: 360px;   /* very small phones */
+  --breakpoint-xs: 360px; /* very small phones */
 }
 
 html {

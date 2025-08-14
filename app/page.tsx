@@ -1,6 +1,7 @@
 import Hero from '@/components/Hero'
 import Navbar from '@/components/Navbar'
 import About from '@/components/About'
+import Projects from '@/components/Projects'  
 
 export default function Home() {
   return (
@@ -13,14 +14,18 @@ export default function Home() {
       <Navbar />
 
       {/* Spacer to account for the fixed navbar height */}
-      <div aria-hidden className="h-[64px]" />
+      <div aria-hidden className="h-[12px]" />
 
       <div className="content-container">
         <section id="about" className="scroll-mt-20">
           <About />
         </section>
-        <section id="projects" className="scroll-mt-20">{/* ... */}</section>
-        <section id="contact" className="scroll-mt-20">{/* ... */}</section>
+        <section id="projects" className="scroll-mt-20">
+          <Projects />
+        </section>
+        <section id="contact" className="scroll-mt-20">
+          {/* ... */}
+        </section>
       </div>
     </>
   )
