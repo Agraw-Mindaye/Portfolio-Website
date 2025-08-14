@@ -1,93 +1,36 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
-
-const SECTIONS = [
-  { id: 'about', label: 'About' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'contact', label: 'Contact' },
-]
+import { useStickyNav } from '@/app/hooks/useStickyNav'
 
 export default function Navbar() {
-  const [visible, setVisible] = useState(false)
-  const [active, setActive] = useState('about')
-
-  useEffect(() => {
-    const navHeight = 56 // keep in sync with h-[56px]
-    const sentinel = document.getElementById('nav-sentinel')
-    if (!sentinel) return
-
-    const io = new IntersectionObserver(
-      ([entry]) => {
-        // If the sentinel is intersecting (we are near top/hero), hide the nav.
-        // If it's not intersecting (we scrolled past it), show the nav.
-        setVisible(!entry.isIntersecting)
-      },
-      {
-        root: null,
-        rootMargin: `-${navHeight}px 0px 0px 0px`,
-        threshold: 0,
-      }
-    )
-
-    io.observe(sentinel)
-    return () => io.disconnect()
-  }, [])
-
-  // Smooth scroll & active highlight (optional)
-  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>, id: string) => {
-    e.preventDefault()
-    setActive(id)
-    const target = document.getElementById(id)
-    const navHeight = 56
-    if (target) {
-      const top = target.getBoundingClientRect().top + window.scrollY - navHeight
-      window.scrollTo({ top, behavior: 'smooth' })
-      history.pushState(null, '', `#${id}`)
-    }
-  }
-
-  const linkClass = (id: string) =>
-    `text-sm sm:text-base transition ${
-      active === id
-        ? 'text-blue-300 underline underline-offset-4'
-        : 'text-white hover:text-blue-300'
-    }`
+  const isSticky = useStickyNav()
 
   return (
     <nav
-      className={[
-        // fixed so it’s independent of ancestor overflow quirks
-        'fixed top-0 inset-x-0 z-[1000]',
-        // styling
-        'bg-slate-900/90 backdrop-blur shadow-sm',
-        // animation
-        'transition-all duration-300',
-        visible ? 'translate-y-0 opacity-100' : '-translate-y-full opacity-0 pointer-events-none',
-      ].join(' ')}
-      aria-hidden={!visible}
+      className={`w-full z-50 transition-all 
+        ${isSticky ? 'fixed top-0 bg-white/80 backdrop-blur-md shadow' 
+                   : 'relative'
+        } text-foreground bg-white/80 backdrop-blur-md shadow`}
     >
-      <div className="mx-auto max-w-screen-xl w-full px-4 py-3 h-[56px] flex items-center
-                      justify-center md:justify-between gap-4">
-        <span className="hidden md:inline font-bold text-lg tracking-tight text-white">Agraw Mindaye</span>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+        {/* Name (hidden on small screens) */}
+        <div className="text-lg font-semibold hidden sm:block">
+          Agraw Mindaye
+        </div>
 
-        <div className="flex gap-6 items-center">
-          {SECTIONS.map(({ id, label }) => (
-            <Link
-              key={id}
-              href={`#${id}`}
-              onClick={(e) => handleClick(e, id)}
-              className={linkClass(id)}
-            >
-              {label}
-            </Link>
-          ))}
+        {/* Nav Links */}
+        <div className="flex-1 flex justify-center sm:justify-end items-center space-x-4 sm:space-x-6 text-sm sm:text-base">
+          <a href="#about" className="hover:text-blue-500 transition">About</a>
+          <a href="#projects" className="hover:text-blue-500 transition">Projects</a>
+          <a href="#contact" className="hover:text-blue-500 transition">Contact</a>
 
+          {/* Resume Button */}
           <Link
             href="/resume.pdf"
             target="_blank"
-            className="text-sm sm:text-base px-3 py-1 rounded bg-teal-500 text-slate-900 font-medium hover:bg-teal-400"
+            rel="noopener noreferrer"
+            className="ml-4 px-4 py-2 rounded-md border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition text-sm sm:text-base"
           >
             Resume
           </Link>
