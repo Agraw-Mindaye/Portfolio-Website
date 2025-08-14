@@ -1,17 +1,6 @@
 'use client'
 
 export default function Hero() {
-  const scrollToContent = () => {
-    const contentContainer = document.querySelector('.content-container')
-    const navbarHeight = document.querySelector('nav')?.offsetHeight || 0
-
-    if (contentContainer) {
-      window.scrollTo({
-        top: contentContainer.getBoundingClientRect().top + window.scrollY - navbarHeight,
-        behavior: 'smooth',
-      })
-    }
-  }
 
   return (
     <section
@@ -26,13 +15,12 @@ export default function Hero() {
         <p className="text-lg sm:text-xl text-gray-600 mb-10">
           Full-Stack & Embedded Systems Developer
         </p>
-        <button
-          onClick={scrollToContent}
+        <a
+          href="#about"
           className="text-lg px-6 py-3 rounded-md bg-blue-500 text-white font-medium transition hover:bg-blue-600"
-          aria-label="Scroll to view my work"
         >
           View My Work
-        </button>
+        </a>
       </div>
     </section>
   )
