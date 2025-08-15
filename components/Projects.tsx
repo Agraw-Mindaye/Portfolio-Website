@@ -109,11 +109,6 @@ export default function Projects() {
             </article>
           ))}
         </div>
-
-        {/* temporary footer */}
-        <p className="mt-12 text-center text-sm text-gray-500 italic">
-          In progress — more content coming soon.
-        </p>
       </div>
     </section>
   )
