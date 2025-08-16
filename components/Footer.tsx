@@ -3,7 +3,7 @@ import { FaGithub, FaLinkedin } from "react-icons/fa";
 
 export default function Footer() {
   return (
-    <footer className="flex flex-col items-center justify-center mt-12 p-6 bg-slate-900 text-slate-200 h-28 w-full">
+    <footer className="flex flex-col items-center justify-center p-6 bg-slate-900 text-slate-200 h-28 w-full">
       {/* Social Icons */}
       <div className="flex gap-6 mb-2">
         <a
