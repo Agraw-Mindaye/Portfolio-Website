@@ -18,32 +18,6 @@ export const projects: Project[] = [
     demo: 'https://www.youtube.com/watch?v=qR6wuf3IQvo&ab_channel=Agraw',
   },
   {
-    title: 'LED Control Panel',
-    description:
-      'An interactive microcontroller-based system that cycles between different LED modes through physical switches',
-    image: '/projects/led_control_panel.png',
-    tech: ['C++', 'Arduino', 'PWM'],
-    github: 'https://github.com/youruser/algo-visualizer',
-    demo: 'https://www.youtube.com/watch?v=vhHJIunVW4I&ab_channel=Agraw',
-  },
-
-  {
-    title: 'Embedded Systems',
-    description: 'A collection of my embedded systems roadmap and projects',
-    image: '/projects/embedded_systems.jpg',
-    tech: ['C', 'C++', 'GDB', 'QEMU', 'RTOS'],
-    github: 'https://github.com/Agraw-Mindaye/Embedded-Systems',
-  },
-  {
-    title: 'Portfolio Website',
-    description:
-      'A personal portfolio built with Next.js and Tailwind CSS. Showcases projects and skills with a responsive design',
-    image: '/projects/portfolio_website.png',
-    tech: ['Next.js', 'Tailwind CSS', 'TypeScript'],
-    github: 'https://github.com/Agraw-Mindaye/Portfolio-Website',
-    demo: 'https://www.agrawmin.com/',
-  },
-  {
     title: 'Bergen Routes',
     description:
       'A way‑finding web application designed to assist users in navigating large buildings',
@@ -53,11 +27,28 @@ export const projects: Project[] = [
     demo: 'https://bergenroutes.com/',
   },
   {
-    title: 'GPT from Scratch',
-    description: 'An Implementaton a miniature Generative Pre-trained Transformer (GPT) in PyTorch',
-    image: '/projects/gpt_from_scratch.png',
-    tech: ['Python', 'PyTorch', 'Machine Learning'],
-    github: 'https://github.com/Agraw-Mindaye/gpt-from-scratch',
-    demo: 'https://www.youtube.com/watch?v=kCc8FmEb1nY&ab_channel=AndrejKarpathy',
+    title: 'Ethical Hacking Malware',
+    description:
+      'An interactive microcontroller-based system that cycles between different LED modes through physical switches',
+    image: '/projects/ethical_hacking.jpg',
+    tech: ['C++'],
+    github: 'https://github.com/Agraw-Mindaye/Ethical-Hacking-Malware',
+    demo: 'https://youtu.be/rTSxzM5T_7I',
+  },
+  {
+    title: 'LED Control Panel',
+    description:
+      'An interactive microcontroller-based system that cycles between different LED modes through physical switches',
+    image: '/projects/led_control_panel.png',
+    tech: ['C++', 'Arduino', 'PWM'],
+    github: 'https://github.com/Agraw-Mindaye/LED-Control-Panel',
+    demo: 'https://www.youtube.com/watch?v=vhHJIunVW4I&ab_channel=Agraw',
+  },
+  {
+    title: 'Embedded Systems',
+    description: 'A collection of my embedded systems roadmap and projects',
+    image: '/projects/embedded_systems.jpg',
+    tech: ['C', 'C++', 'GDB', 'QEMU', 'RTOS'],
+    github: 'https://github.com/Agraw-Mindaye/Embedded-Systems',
   },
 ]
