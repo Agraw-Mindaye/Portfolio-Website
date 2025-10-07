@@ -1,7 +1,7 @@
 export type Project = {
   title: string
   description: string
-  image?: string // optional; we render a fallback if missing
+  image?: string
   tech: string[]
   github?: string
   demo?: string
@@ -29,7 +29,7 @@ export const projects: Project[] = [
   {
     title: 'Ethical Hacking Malware',
     description:
-      'An interactive microcontroller-based system that cycles between different LED modes through physical switches',
+      'A simulation of different malwares conducted to demonstrate vulnerabilities',
     image: '/projects/ethical_hacking.jpg',
     tech: ['C++'],
     github: 'https://github.com/Agraw-Mindaye/Ethical-Hacking-Malware',
