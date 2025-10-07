@@ -12,7 +12,7 @@ export default function Hero() {
           Hi, I'm <span className="text-blue-500">Agraw</span>
         </h1>
         <p className="text-lg sm:text-xl text-gray-600 mb-10">
-          Full-Stack & Embedded Systems Developer
+          Embedded & Control Systems Engineer
         </p>
         <a
           href="#about"
