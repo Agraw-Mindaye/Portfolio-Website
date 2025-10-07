@@ -1,34 +1,39 @@
 'use client'
 
 import {
-  FaReact,
-  FaPython,
-  FaGitAlt,
-  FaDatabase,
-  FaJsSquare,
-  FaNodeJs,
   FaUserAlt,
+  FaGitAlt,
+  FaBug,
+  FaJsSquare,
+  FaDatabase,
+  FaMicrochip,
+  FaNetworkWired,
 } from 'react-icons/fa'
-import { SiC, SiCplusplus, SiNextdotjs, SiExpress } from 'react-icons/si'
+import {
+  SiCplusplus,
+  SiEspressif,
+  SiStmicroelectronics,
+  SiLinux,
+} from 'react-icons/si'
 import { ReactNode } from 'react'
 
 // Skill groups
 const skillColumns = [
   [
-    { name: 'C', icon: <SiC /> },
-    { name: 'C++', icon: <SiCplusplus /> },
-    { name: 'Python', icon: <FaPython /> },
-  ],
-  [
+    { name: 'C/C++', icon: <SiCplusplus /> },
     { name: 'JavaScript', icon: <FaJsSquare /> },
-    { name: 'React', icon: <FaReact /> },
     { name: 'SQL', icon: <FaDatabase /> },
-    { name: 'Git', icon: <FaGitAlt /> },
   ],
   [
-    { name: 'Node.js', icon: <FaNodeJs /> },
-    { name: 'Next.js', icon: <SiNextdotjs /> },
-    { name: 'Express.js', icon: <SiExpress /> },
+    { name: 'ESP32', icon: <SiEspressif /> },
+    { name: 'STM32', icon: <SiStmicroelectronics /> },
+    { name: 'RTOS', icon: <FaMicrochip /> },
+    { name: 'I²C/SPI', icon: <FaNetworkWired /> },
+  ],
+  [
+    { name: 'Git', icon: <FaGitAlt /> },
+    { name: 'GDB', icon: <FaBug /> },
+    { name: 'Linux', icon: <SiLinux /> },
   ],
 ]
 
@@ -94,14 +99,13 @@ export default function About() {
               <FaUserAlt className="text-slate-900/20 text-[6rem] sm:text-[8rem] md:text-[10rem]" />
             </div>
             <p className="text-base sm:text-lg">
-              I'm a Software Engineer focused on full-stack development and embedded systems. Driven
-              by a passion for problem solving, I'm committed to building efficient embedded and
-              full-stack solutions. With expertise in modern technologies like C/C++, Python, React,
-              and SQL, I strive to craft seamless user experiences and write clean, maintainable
-              code.
+              I'm an Embedded & Control Systems Engineer focused on creating reliable
+              and efficient hardware-software solutions. My experience spans developing firmware in
+              C/C++ for ESP32 and STM32 microcontrollers, implementing real-time logic with RTOS, 
+              and integrating sensors and peripherals over I²C, SPI, and UART.
               <br />
               <br />
-              When I'm not at my computer, I spend my time cooking, staying active, and exploring
+              When I'm not at my computer, I enjoy spending my time cooking, staying active, and exploring
               new music.
             </p>
           </div>
