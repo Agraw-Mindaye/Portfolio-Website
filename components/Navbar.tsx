@@ -1,52 +1,138 @@
 'use client'
 
-import Link from 'next/link'
+import { useState } from 'react'
 
-import { useStickyNav } from '@/app/hooks/useStickyNav'
-import { useActiveSection } from '@/app/hooks/useActiveSection'
+const links = [
+  {
+    id: 'home',
+    label: 'Home',
+    action: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
+  },
+  {
+    id: 'expertise',
+    label: 'Expertise',
+    action: () => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }),
+  },
+  {
+    id: 'work',
+    label: 'Work',
+    action: () => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }),
+  },
+  {
+    id: 'contact',
+    label: 'Contact',
+    action: () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }),
+  },
+]
 
 export default function Navbar() {
-  const isSticky = useStickyNav()
-  const { activeSection } = useActiveSection()
-
-  const navLinkStyle = (id: string) =>
-    `transition hover:text-blue-500 text-lg ${
-      activeSection === `#${id}` ? 'text-blue-600 font-semibold' : 'text-foreground'
-    }=`
+  const [hoveredLink, setHoveredLink] = useState<string | null>(null)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   return (
     <>
-      {isSticky && <div className="h-16" aria-hidden="true" />}
-      <nav
-        className={`w-full z-50 transition-all ${
-          isSticky ? 'fixed top-0' : 'relative'
-        } text-foreground bg-white/95 backdrop-blur-md shadow-md border-b border-gray-200`}
-      >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="text-lg font-semibold hidden sm:block">Agraw Mindaye</div>
+      <nav className="fixed inset-x-0 top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-white/10">
+        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
 
-          <div className="flex-1 flex justify-center sm:justify-end items-center space-x-4 sm:space-x-6 text-sm sm:text-base">
-            <a href="#about" className={navLinkStyle('about')}>
-              About
-            </a>
-            <a href="#projects" className={navLinkStyle('projects')}>
-              Projects
-            </a>
-            <a href="#contact" className={navLinkStyle('contact')}>
-              Contact
-            </a>
+          {/* Name */}
+          <span className="font-mono text-xs uppercase tracking-widest text-white/80 select-none">
+            Agraw Mindaye
+          </span>
 
-            <Link
-              href="/resume.pdf"
-              target="_blank"
-              rel="noopener noreferrer"
-              className=" px-4 py-2 rounded-md border border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white transition text-sm sm:text-base"
-            >
-              Resume
-            </Link>
-          </div>
+          {/* Desktop links */}
+          <ul
+            className="hidden md:flex items-center gap-8 list-none cursor-pointer"
+            onMouseLeave={() => setHoveredLink(null)}
+          >
+            {links.map(({ id, label, action }) => (
+              <li key={id} onMouseEnter={() => setHoveredLink(id)}>
+                <button
+                  onClick={action}
+                  className={`font-mono text-xs uppercase tracking-widest transition-colors duration-200 cursor-pointer ${
+                    hoveredLink === null
+                      ? 'text-white/80'
+                      : hoveredLink === id
+                      ? 'text-white'
+                      : 'text-white/25'
+                  }`}
+                >
+                  {label}
+                </button>
+              </li>
+            ))}
+
+            {/* Resume — bordered pill */}
+            <li onMouseEnter={() => setHoveredLink('resume')} onMouseLeave={() => setHoveredLink(null)}>
+              <a
+                href="/resume.pdf"
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`font-mono text-xs uppercase tracking-widest transition-colors duration-200 border rounded-md px-4 py-1.5 ${
+                  hoveredLink === 'resume'
+                    ? 'text-white border-white/70'
+                    : 'text-white/80 border-white/30'
+                }`}
+              >
+                Resume
+              </a>
+            </li>
+          </ul>
+
+          {/* Mobile hamburger — always mounted so CSS transition runs both ways */}
+          <button
+            className="flex md:hidden flex-col justify-center gap-1.5 cursor-pointer p-1"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          >
+            <span
+              className={`block w-5 h-px bg-white transition-all duration-300 ease-in-out origin-center ${
+                menuOpen ? 'rotate-45 translate-y-[7px]' : ''
+              }`}
+            />
+            <span
+              className={`block w-5 h-px bg-white transition-all duration-300 ease-in-out ${
+                menuOpen ? 'opacity-0 scale-x-0' : ''
+              }`}
+            />
+            <span
+              className={`block w-5 h-px bg-white transition-all duration-300 ease-in-out origin-center ${
+                menuOpen ? '-rotate-45 -translate-y-[7px]' : ''
+              }`}
+            />
+          </button>
         </div>
       </nav>
+
+      {/* Mobile overlay — persistent, visibility toggled via opacity + pointer-events */}
+      <div
+        className={`fixed inset-0 z-40 flex flex-col items-center justify-center gap-10 transition-opacity duration-300 ${
+          menuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+        }`}
+        style={{ backgroundColor: '#1a191d' }}
+      >
+        {links.map(({ id, label, action }) => (
+          <button
+            key={id}
+            onClick={() => {
+              setMenuOpen(false)
+              action()
+            }}
+            className="font-mono text-2xl uppercase tracking-widest text-white cursor-pointer"
+          >
+            {label}
+          </button>
+        ))}
+
+        <a
+          href="/resume.pdf"
+          target="_blank"
+          rel="noopener noreferrer"
+          onClick={() => setMenuOpen(false)}
+          className="font-mono text-2xl uppercase tracking-widest text-white border border-white/40 rounded-full px-8 py-2"
+        >
+          Resume
+        </a>
+      </div>
     </>
   )
 }
