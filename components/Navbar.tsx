@@ -9,8 +9,8 @@ const links = [
     action: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
   },
   {
-    id: 'expertise',
-    label: 'Expertise',
+    id: 'about',
+    label: 'About',
     action: () => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }),
   },
   {
