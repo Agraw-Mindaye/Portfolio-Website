@@ -11,3 +11,9 @@ body {
   background-color: #1a191d;
   color: #e5e5e5;
 }
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
