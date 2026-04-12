@@ -1,39 +1,44 @@
 'use client'
 
 import { useState } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 
 const links = [
-  {
-    id: 'home',
-    label: 'Home',
-    action: () => window.scrollTo({ top: 0, behavior: 'smooth' }),
-  },
-  {
-    id: 'about',
-    label: 'About',
-    action: () => document.getElementById('about')?.scrollIntoView({ behavior: 'smooth' }),
-  },
-  {
-    id: 'work',
-    label: 'Work',
-    action: () => document.getElementById('projects')?.scrollIntoView({ behavior: 'smooth' }),
-  },
-  {
-    id: 'contact',
-    label: 'Contact',
-    action: () => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' }),
-  },
+  { id: 'home', label: 'Home', sectionId: 'home' },
+  { id: 'about', label: 'About', sectionId: 'about' },
+  { id: 'work', label: 'Work', sectionId: 'projects' },
+  { id: 'contact', label: 'Contact', sectionId: 'contact' },
 ]
+
+function scrollToSection(id: string) {
+  if (id === 'home') {
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+    return
+  }
+  const el = document.getElementById(id)
+  if (!el) return
+  const top = el.getBoundingClientRect().top + window.scrollY
+  window.scrollTo({ top, behavior: 'smooth' })
+}
 
 export default function Navbar() {
   const [hoveredLink, setHoveredLink] = useState<string | null>(null)
   const [menuOpen, setMenuOpen] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
+
+  function navigate(sectionId: string) {
+    if (pathname === '/') {
+      scrollToSection(sectionId)
+    } else {
+      router.push(sectionId === 'home' ? '/' : `/#${sectionId}`)
+    }
+  }
 
   return (
     <>
       <nav className="fixed inset-x-0 top-0 z-50 bg-background/80 backdrop-blur-sm border-b border-white/10">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4 lg:px-8">
-
           {/* Name */}
           <span className="font-mono text-xs uppercase tracking-widest text-white/80 select-none">
             Agraw Mindaye
@@ -44,16 +49,20 @@ export default function Navbar() {
             className="hidden md:flex items-center gap-8 list-none cursor-pointer"
             onMouseLeave={() => setHoveredLink(null)}
           >
-            {links.map(({ id, label, action }) => (
-              <li key={id} onMouseEnter={() => setHoveredLink(id)}>
+            {links.map(({ id, label, sectionId }) => (
+              <li
+                key={id}
+                onMouseEnter={() => setHoveredLink(id)}
+                onMouseLeave={() => setHoveredLink(null)}
+              >
                 <button
-                  onClick={action}
+                  onClick={() => navigate(sectionId)}
                   className={`font-mono text-xs uppercase tracking-widest transition-colors duration-200 cursor-pointer ${
                     hoveredLink === null
                       ? 'text-white/80'
                       : hoveredLink === id
-                      ? 'text-white'
-                      : 'text-white/25'
+                        ? 'text-white'
+                        : 'text-white/25'
                   }`}
                 >
                   {label}
@@ -62,7 +71,10 @@ export default function Navbar() {
             ))}
 
             {/* Resume — bordered pill */}
-            <li onMouseEnter={() => setHoveredLink('resume')} onMouseLeave={() => setHoveredLink(null)}>
+            <li
+              onMouseEnter={() => setHoveredLink('resume')}
+              onMouseLeave={() => setHoveredLink(null)}
+            >
               <a
                 href="/resume.pdf"
                 target="_blank"
@@ -110,12 +122,12 @@ export default function Navbar() {
         }`}
         style={{ backgroundColor: '#1a191d' }}
       >
-        {links.map(({ id, label, action }) => (
+        {links.map(({ id, label, sectionId }) => (
           <button
             key={id}
             onClick={() => {
               setMenuOpen(false)
-              action()
+              navigate(sectionId)
             }}
             className="font-mono text-2xl uppercase tracking-widest text-white cursor-pointer"
           >
