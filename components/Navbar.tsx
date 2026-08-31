@@ -76,7 +76,7 @@ export default function Navbar() {
               onMouseLeave={() => setHoveredLink(null)}
             >
               <a
-                href="/resume.pdf"
+                href="Agraw_Mindaye_Resume.pdf"
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`font-mono text-xs uppercase tracking-widest transition-colors duration-200 border rounded-md px-4 py-1.5 ${
