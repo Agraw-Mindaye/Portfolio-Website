@@ -10,23 +10,29 @@ export type Challenge = {
   description: string
 }
 
+/**
+ * Every content field below the hero is optional. A study renders only the
+ * sections it actually has, so an in-progress project reads as a short finished
+ * page rather than a template with empty slots. Section numbering is derived at
+ * render time, so gaps never produce a "01, 03" sequence.
+ */
 export type CaseStudy = {
   descriptor: string
   summary: string
   metadata: Metadata[]
-  heroImageSrc: string
-  codeUrl: string
-  demoUrl: string
-  overview: string
-  technicalDesign: {
-    description: string
-    coreFeatures: string[]
-    challenges: Challenge[]
+  heroImageSrc?: string
+  codeUrl?: string
+  demoUrl?: string
+  overview?: string
+  technicalDesign?: {
+    description?: string
+    coreFeatures?: string[]
+    challenges?: Challenge[]
   }
-  outcomes: {
-    results: string[]
-    techStack: string[]
-    nextSteps: string[]
+  outcomes?: {
+    results?: string[]
+    techStack?: string[]
+    nextSteps?: string[]
   }
 }
 
@@ -151,131 +157,73 @@ export const CASE_STUDIES: Record<string, CaseStudy> = {
     },
   },
 
-  'embedded-systems-portfolio': {
-    descriptor:
-      'Structured multi-phase firmware portfolio covering MCU fundamentals and peripheral integration across Arduino Mega 2560 and ESP32 platforms.',
-    summary:
-      'A progressive firmware engineering portfolio organized into two phases: Phase 1 covering core embedded fundamentals (GPIO, ADC, PWM, UART, timers, and interrupts) and Phase 2 covering peripheral integration (I2C/SPI displays, sensor acquisition, actuator control, SD card logging, and embedded UI design). Each module contains a self-contained hardware project with documented firmware, reproducible wiring, and working demonstrations — built across Arduino Mega 2560 and ESP32 platforms using C and C++.',
-    metadata: [
-      {
-        label: 'Role',
-        value: 'Embedded Systems Engineer',
-      },
-      { label: 'Timeline', value: 'Started: March 2025' },
-      {
-        label: 'Status',
-        value: 'In Progress, actively expanding',
-      },
-      { label: 'Platform', value: 'Arduino Mega 2560, ESP32 WROVER' },
+  'data-acquisition-platform': {
+  descriptor:
+    'Bare-metal Cortex-M33 sensor platform with SD storage and authenticated encryption',
+  summary:
+    'Sole firmware developer on an embedded sensor-logging platform for a defense application. Brought the board up from first power-on (clock tree, peripheral init, runtime baseline) then built the full acquisition and storage path: register-level I2C drivers for inertial and thermal sensing, an SPI microSD driver written from scratch against a FAT filesystem, a self-describing wire format for the logged records, and authenticated encryption protecting data at rest. Validated through multi-hour continuous endurance runs.',
+  metadata: [
+    {
+      label: 'Role',
+      value: 'Sole firmware engineer –– bring-up, drivers, storage, encryption, validation',
+    },
+    { label: 'Timeline', value: 'In development — 2026' },
+    { label: 'Status', value: 'Active development' },
+    { label: 'Platform', value: 'ARM Cortex-M33, bare-metal C' },
+    { label: 'Context', value: 'Stukes Defense' },
+  ],
+  heroImageSrc: '/projects/data_acquisition_platform.jpeg',
+  overview:
+    'A bare-metal firmware platform that acquires inertial and thermal sensor data, encodes it into a self-describing record format, and writes it to removable storage under authenticated encryption. The system is built to log continuously for hours without intervention, survive interruption without corrupting the record, and make tampering with stored data detectable rather than silent.\n\nI joined at first power-on and built the stack as the sole firmware developer: clock and peripheral configuration, sensor drivers written directly against register maps with explicit device validation and error handling, a block-level SPI storage driver implemented from scratch rather than pulled from a vendor example, the encoding and block-assembly pipeline, and the cryptographic layer. The architecture separates drivers, sensor abstraction, encoding, and application flow so the same firmware carries forward across hardware revisions.',
+  technicalDesign: {
+    description:
+      'Three design constraints shaped the system. Acquisition had to stay deterministic while storage writes contended for time on the same core, so the sampling path is decoupled from the write path rather than sharing a call stack. The record format had to be self-describing, so a reader can parse a session without out-of-band knowledge of what was logged or in what order. And storage had to be resilient to interruption, since a session that ends unexpectedly still has to leave a readable record behind rather than a truncated one.',
+    coreFeatures: [
+      'Board bring-up from first power-on: clock configuration, peripheral initialization, validated runtime baseline',
+      'Register-level I2C drivers for inertial and thermal sensing with device identity checks and structured error handling',
+      'SPI block storage driver written from scratch against a FAT filesystem — initialization sequence, block read/write, session-based file management',
+      'Self-describing record encoding and block assembly against a formal wire-format specification',
+      'Authenticated encryption for data at rest, including nonce construction and key handling',
+      'Layered architecture separating drivers, sensor abstraction, encoding, and application flow',
     ],
-    heroImageSrc: '/projects/embedded_systems.jpg',
-    codeUrl: 'https://github.com/Agraw-Mindaye/Embedded-Systems',
-    demoUrl: '#',
-    overview:
-      'A structured embedded firmware portfolio organized into two phases: Phase 1 covering MCU fundamentals (GPIO, ADC, PWM, UART, timers, interrupts) on Arduino Mega 2560, and Phase 2 covering peripheral integration (I2C/SPI displays, DHT11 sensor acquisition, servo control, SD card logging, and menu-driven UI) on ESP32 WROVER. Each module is a standalone PlatformIO project with working firmware and documented hardware setup, built to develop and demonstrate hands-on competency progressively — each phase introducing concepts the next applies in more complex, integrated contexts.',
-    technicalDesign: {
-      description:
-        'All modules follow a consistent PlatformIO layout (include/, lib/, src/, test/) with non-blocking millis()-based timing and volatile-qualified ISR variables enforced as hard constraints across every module. Phase 1 modules are written in C++ with direct peripheral access; Phase 2 modules introduce driver abstractions for LCD, SD, and sensor peripherals with clear separation between initialization, data acquisition, and application logic. Hardware spans both platforms: Phase 1 uses Arduino Mega 2560 with LEDs, buttons, potentiometers, and UART; Phase 2 uses ESP32 WROVER integrating a DHT11 on GPIO, a 16x2 I2C LCD, an SPI microSD module, and a PWM-driven servo.',
-      coreFeatures: [
-        'Phase 1 — GPIO blink, interrupt-driven button input, potentiometer ADC to PWM LED brightness, UART serial control, and non-blocking timer/interrupt patterns.',
-        'Phase 2 — I2C LCD UI with button and potentiometer navigation, DHT11 temperature/humidity acquisition with display output and menu system, servo motor control from analog input, and SPI SD card data logging.',
-        'Cross-platform coverage: Arduino Mega 2560 (Phase 1) and ESP32 WROVER (Phase 2).',
-      ],
-      challenges: [
-        {
-          title: 'Maintaining Non-Blocking Behavior Across All Modules',
-          description:
-            'Enforcing non-blocking timing as a hard constraint across every module required restructuring several early implementations that used delay() for simplicity. This discipline became progressively easier as millis()-based state machines became the default mental model, and it paid off in Phase 2 where multiple concurrent tasks (sensor sampling, display updates, and button input) needed to coexist without interference.',
-        },
-        {
-          title: 'Cross-Platform Peripheral Differences Between Arduino and ESP32',
-          description:
-            'Moving from the Arduino Mega to the ESP32 in Phase 2 introduced meaningful differences in pin capabilities, I2C/SPI initialization, and ADC resolution that required platform-specific adaptations rather than direct code reuse. Treating each platform on its own terms produced cleaner firmware and a better understanding of where platform differences actually matter.',
-        },
-      ],
-    },
-    outcomes: {
-      results: [
-        'All Phase 1 and Phase 2 modules are complete with working firmware and documented hardware setups.',
-        'Firmware across all modules is non-blocking, no delay() calls in any main loop execution path.',
-        'Cross-platform development demonstrated across Arduino Mega 2560 and ESP32 WROVER with correct peripheral initialization on each.',
-      ],
-      techStack: [
-        'C',
-        'C++',
-        'PlatformIO',
-        'Arduino CLI',
-        'Arduino Mega 2560',
-        'ESP32 WROVER',
-        'I2C',
-        'SPI',
-        'UART',
-        'GPIO',
-        'PWM',
-        'ADC',
-        'Git',
-      ],
-      nextSteps: [
-        'Begin Phase 3: RTOS fundamentals using FreeRTOS - task creation, semaphores, and queue-based inter-task communication.',
-        'Add networking modules: Wi-Fi HTTP server and MQTT publishing on ESP32.',
-        'Introduce STM32 as a third platform to cover bare-metal HAL development without an Arduino abstraction layer.',
-      ],
-    },
-  },
-
-  'embedded-thermal-management': {
-    descriptor:
-      'Closed-loop temperature controller with FSM-based logic, PWM fan actuation, and live UART telemetry dashboard.',
-    summary:
-      'Designed and implemented a dual-microcontroller thermal management system using an STM32 Nucleo F030R8 as the control node and an ESP32 WROVER as the UI node. The STM32 runs a formal three-state finite state machine (MONITORING, COOLING, FAULT) with hysteresis-based bang-bang control, driving a PWM-actuated fan in response to live sensor data. System telemetry is transmitted over UART to the ESP32, which renders real-time temperature, humidity, and system state on an LCD display, with a web dashboard planned for remote visualization.',
-    metadata: [
-      {
-        label: 'Role',
-        value:
-          'Embedded Systems Engineering — firmware architecture, hardware integration, and system design',
-      },
-      { label: 'Timeline', value: 'Ongoing — started April 2026' },
-      {
-        label: 'Status',
-        value: 'In Development',
-      },
-      { label: 'Platform', value: 'STM32 Nucleo F030R8 (ARM Cortex-M0), ESP32 WROVER' },
+    challenges: [
+      // TODO — Agraw fills these in. Pick the two or three that actually cost
+      // the most days. This section is where the case study earns the featured
+      // slot, and it's fully publishable: how you found a bug reveals your
+      // process, not the product's design.
+      //
+      // Format for each: what broke, what the symptom looked like, how you
+      // instrumented it, what the fix turned out to be. Describe the problem
+      // class generically ("writes were stalling the sample loop") rather than
+      // the system's internals.
     ],
-    heroImageSrc: '/projects/thermal_management.jpg',
-    codeUrl: 'https://github.com/Agraw-Mindaye/thermal-management-system',
-    demoUrl: '#',
-    overview:
-      'A dual-microcontroller thermal management system using an STM32 Nucleo F030R8 as the control node and an ESP32 WROVER as the UI node. The STM32 runs a formal three-state FSM (MONITORING, COOLING, FAULT) with hysteresis-based bang-bang control, driving a PWM-actuated fan based on live sensor data and transmitting structured ASCII telemetry over UART every 500ms. The ESP32 parses incoming frames and renders real-time temperature, humidity, and system state on an LCD. The system was designed to handle sensor faults gracefully with a defined FAULT state and fan shutdown, keeping the STM32 control loop fully decoupled from any UI-side latency.',
-    technicalDesign: {
-      description: 'In progress ...',
-      coreFeatures: ['Expected Core Feature: ...'],
-      challenges: [
-        {
-          title: 'Potential Challenge: Hysteresis Tuning and Control Stability',
-          description: '',
-        },
-        {
-          title: 'Potential Challenge: UART Frame Robustness Across MCU Boundaries',
-          description: '',
-        },
-      ],
-    },
-    outcomes: {
-      results: ['In progress ...'],
-      techStack: [
-        'Embedded C',
-        'STM32CubeIDE',
-        'ESP-IDF',
-        'STM32 Nucleo F030R8',
-        'ESP32 WROVER',
-        'UART',
-        'PWM',
-        'I2C',
-        'ARM Cortex-M0',
-      ],
-      nextSteps: [''],
-    },
   },
+  outcomes: {
+    results: [
+      'Verified end-to-end: real session data decrypts and parses correctly, and deliberately tampered records are rejected rather than silently accepted',
+      'Sustained continuous logging across multi-hour endurance runs with storage integrity and encryption reliability intact',
+      // TODO — add relative figures if you have them. Ratios and bounds rather
+      // than absolutes: "logged at Nx the required sample rate", "N hours
+      // continuous with zero corrupted records", "worst-case loop time stayed
+      // under budget across the full run". Avoid figures precise enough to
+      // characterize the system.
+    ],
+    techStack: [
+      'Embedded C',
+      'ARM Cortex-M33',
+      'Bare-metal firmware',
+      'I2C',
+      'SPI',
+      'FatFs / FAT32',
+      'Authenticated encryption',
+      'Endurance & stress testing',
+    ],
+  },
+  // Deliberately absent, not missing: figures, excerpts, measurements, codeUrl,
+  // demoUrl, heroImageSrc. This case study ships without diagrams, code, or
+  // hardware photos because the work is under a confidentiality constraint.
+  // Do not populate these — their absence is the point.
+}
 }
 
 export function getCaseStudy(slug: string): CaseStudy | undefined {

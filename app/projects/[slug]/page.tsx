@@ -14,8 +14,23 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params
   const project = PROJECTS.find((p) => p.slug === slug)
+  const study = getCaseStudy(slug)
+  if (!project) return { title: 'Project' }
+
+  // Lead with the technology rather than spending the highest-value title
+  // characters on the word "Case Study". The root layout's template appends the
+  // site name, so this stays short.
+  const description = study?.descriptor ?? project.description
+
   return {
-    title: project ? `${project.title} — Case Study` : 'Project',
+    title: project.title,
+    description,
+    openGraph: {
+      title: project.title,
+      description,
+      type: 'article',
+      images: project.imageSrc ? [project.imageSrc] : undefined,
+    },
   }
 }
 
@@ -57,25 +72,13 @@ function ArrowRight() {
   )
 }
 
-function SectionHeader({ index, title }: { index: string; title: string }) {
+function SectionHeader({ index, title }: { index: number; title: string }) {
   return (
     <div className="mb-10 border-t border-white/10 pt-16 md:pt-20">
-      <p className="mb-3 font-mono text-[0.65rem] uppercase tracking-[0.24em] text-white/28">
-        {index}
+      <p className="mb-3 font-mono text-[0.65rem] uppercase tracking-[0.24em] text-white/55">
+        {String(index).padStart(2, '0')}
       </p>
       <h2 className="text-2xl font-semibold tracking-tight text-white md:text-3xl">{title}</h2>
-    </div>
-  )
-}
-
-function PlaceholderBlock({ label, className = '' }: { label: string; className?: string }) {
-  return (
-    <div
-      className={`flex items-center justify-center border border-white/10 bg-white/[0.02] ${className}`}
-    >
-      <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-white/20">
-        {label}
-      </span>
     </div>
   )
 }
@@ -93,6 +96,17 @@ function BulletList({ items }: { items: string[] }) {
   )
 }
 
+// ─── Content guards ────────────────────────────────────────────────────────────
+
+/** Drops empty/whitespace-only strings so blank data never renders as a bullet. */
+function clean(items?: string[]): string[] {
+  return (items ?? []).filter((item) => item.trim().length > 0)
+}
+
+function hasText(value?: string): boolean {
+  return typeof value === 'string' && value.trim().length > 0
+}
+
 // ─── Page ──────────────────────────────────────────────────────────────────────
 
 export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
@@ -107,13 +121,29 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const prevProject = currentIndex > 0 ? PROJECTS[currentIndex - 1] : null
   const nextProject = currentIndex < PROJECTS.length - 1 ? PROJECTS[currentIndex + 1] : null
 
+  // Resolve which sections actually have content. Anything absent is skipped
+  // entirely rather than rendered as an empty shell, and section numbers are
+  // assigned from what survives so the sequence never skips.
+  const design = study.technicalDesign
+  const designFeatures = clean(design?.coreFeatures)
+  const designChallenges = (design?.challenges ?? []).filter((c) => hasText(c.description))
+  const hasDesign = hasText(design?.description) || designFeatures.length > 0 || designChallenges.length > 0
+
+
+  const results = clean(study.outcomes?.results)
+  const techStack = clean(study.outcomes?.techStack)
+  const nextSteps = clean(study.outcomes?.nextSteps)
+  const hasOutcomes = results.length > 0 || techStack.length > 0 || nextSteps.length > 0
+
+  let section = 0
+
   return (
     <div className="px-6 pb-32 pt-28 md:pt-36">
       <div className="mx-auto max-w-5xl">
         {/* Breadcrumb */}
         <Link
           href="/#projects"
-          className="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.20em] text-white/35 transition-colors duration-200 hover:text-white/65"
+          className="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.20em] text-white/55 transition-colors duration-200 hover:text-white/65"
         >
           <ArrowLeft />
           All Projects
@@ -122,7 +152,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         {/* ── Hero ───────────────────────────────────────────────────────────── */}
 
         <div className="mt-10">
-          <p className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-white/35">
+          <p className="font-mono text-[0.68rem] uppercase tracking-[0.24em] text-white/55">
             Case Study
           </p>
 
@@ -130,7 +160,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             {project.title}
           </h1>
 
-          <p className="mt-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-white/40">
+          <p className="mt-3 font-mono text-[0.72rem] uppercase tracking-[0.18em] text-white/55">
             {study.descriptor}
           </p>
 
@@ -146,7 +176,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             <div className="grid grid-cols-2 gap-px bg-white/10 md:grid-cols-4">
               {study.metadata.map((item) => (
                 <div key={item.label} className="bg-background px-5 py-5">
-                  <p className="font-mono text-[0.60rem] uppercase tracking-[0.16em] text-white/30">
+                  <p className="font-mono text-[0.60rem] uppercase tracking-[0.16em] text-white/55">
                     {item.label}
                   </p>
                   <p className="mt-1.5 text-sm font-medium text-white/70">{item.value}</p>
@@ -221,8 +251,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </div>
 
           {/* Hero image */}
-          <div className="mt-12">
-            {study.heroImageSrc ? (
+          {study.heroImageSrc && (
+            <div className="mt-12">
               <div className="relative aspect-video overflow-hidden">
                 <Image
                   src={study.heroImageSrc}
@@ -233,64 +263,85 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
                   priority
                 />
               </div>
-            ) : (
-              <PlaceholderBlock label="Hero Image / Visual" className="aspect-video" />
-            )}
-          </div>
-        </div>
-
-        {/* ── 01 Overview ────────────────────────────────────────────────────── */}
-
-        <SectionHeader index="01" title="Overview" />
-
-        <p className="text-sm leading-7 text-white/60 md:text-base">{study.overview}</p>
-
-        {/* ── 02 Technical Design ────────────────────────────────────────────── */}
-
-        <SectionHeader index="02" title="Technical Design" />
-
-        <p className="text-sm leading-7 text-white/60 md:text-base">
-          {study.technicalDesign.description}
-        </p>
-
-        <div className="mt-10">
-          <BulletList items={study.technicalDesign.coreFeatures} />
-        </div>
-
-        <div className="mt-10 space-y-5">
-          {study.technicalDesign.challenges.map((item, i) => (
-            <div key={i} className="border border-white/10 px-7 py-6 md:px-8 md:py-7">
-              <h3 className="text-base font-semibold text-white md:text-lg">{item.title}</h3>
-              <p className="mt-3 text-sm leading-7 text-white/55 md:text-base">
-                {item.description}
-              </p>
             </div>
-          ))}
+          )}
         </div>
 
-        {/* ── 03 Outcomes ────────────────────────────────────────────────────── */}
+        {/* ── Overview ───────────────────────────────────────────────────────── */}
 
-        <SectionHeader index="03" title="Outcomes" />
+        {hasText(study.overview) && (
+          <>
+            <SectionHeader index={++section} title="Overview" />
+            <p className="text-sm leading-7 text-white/60 md:text-base">{study.overview}</p>
+          </>
+        )}
 
-        <BulletList items={study.outcomes.results} />
+        {/* ── Technical Design ───────────────────────────────────────────────── */}
 
-        <div className="mt-10 flex flex-wrap gap-2">
-          {study.outcomes.techStack.map((tech) => (
-            <span
-              key={tech}
-              className="rounded-full border border-white/15 px-3 py-1.5 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-white/55"
-            >
-              {tech}
-            </span>
-          ))}
-        </div>
+        {hasDesign && (
+          <>
+            <SectionHeader index={++section} title="Technical Design" />
 
-        <div className="mt-10">
-          <p className="mb-5 font-mono text-[0.65rem] uppercase tracking-[0.20em] text-white/30">
-            Next Steps
-          </p>
-          <BulletList items={study.outcomes.nextSteps} />
-        </div>
+            {hasText(design?.description) && (
+              <p className="text-sm leading-7 text-white/60 md:text-base">{design?.description}</p>
+            )}
+
+            {designFeatures.length > 0 && (
+              <div className="mt-10">
+                <BulletList items={designFeatures} />
+              </div>
+            )}
+
+            {designChallenges.length > 0 && (
+              <div className="mt-10 space-y-5">
+                {designChallenges.map((item, i) => (
+                  <div key={i} className="border border-white/10 px-7 py-6 md:px-8 md:py-7">
+                    <h3 className="text-base font-semibold text-white md:text-lg">{item.title}</h3>
+                    <p className="mt-3 text-sm leading-7 text-white/55 md:text-base">
+                      {item.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
+
+
+
+
+
+        {/* ── Outcomes ───────────────────────────────────────────────────────── */}
+
+        {hasOutcomes && (
+          <>
+            <SectionHeader index={++section} title="Outcomes" />
+
+            {results.length > 0 && <BulletList items={results} />}
+
+            {techStack.length > 0 && (
+              <div className="mt-10 flex flex-wrap gap-2">
+                {techStack.map((tech) => (
+                  <span
+                    key={tech}
+                    className="rounded-full border border-white/15 px-3 py-1.5 font-mono text-[0.65rem] uppercase tracking-[0.14em] text-white/55"
+                  >
+                    {tech}
+                  </span>
+                ))}
+              </div>
+            )}
+
+            {nextSteps.length > 0 && (
+              <div className="mt-10">
+                <p className="mb-5 font-mono text-[0.65rem] uppercase tracking-[0.20em] text-white/55">
+                  Next Steps
+                </p>
+                <BulletList items={nextSteps} />
+              </div>
+            )}
+          </>
+        )}
 
         {/* ── Bottom navigation ──────────────────────────────────────────────── */}
 
@@ -299,7 +350,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             {prevProject ? (
               <Link
                 href={`/projects/${prevProject.slug}`}
-                className="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.20em] text-white/35 transition-colors duration-200 hover:text-white/65"
+                className="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.20em] text-white/55 transition-colors duration-200 hover:text-white/65"
               >
                 <ArrowLeft />
                 <span className="hidden lg:inline">Prev —&nbsp;</span>
@@ -308,7 +359,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             ) : (
               <Link
                 href="/#projects"
-                className="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.20em] text-white/35 transition-colors duration-200 hover:text-white/65"
+                className="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.20em] text-white/55 transition-colors duration-200 hover:text-white/65"
               >
                 <ArrowLeft />
                 All Projects
@@ -318,7 +369,7 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
             {nextProject && (
               <Link
                 href={`/projects/${nextProject.slug}`}
-                className="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.20em] text-white/35 transition-colors duration-200 hover:text-white/65"
+                className="inline-flex items-center gap-2 font-mono text-[0.68rem] uppercase tracking-[0.20em] text-white/55 transition-colors duration-200 hover:text-white/65"
               >
                 <span className="hidden lg:inline">Next —&nbsp;</span>
                 {nextProject.title}
