@@ -125,6 +125,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   // Resolve which sections actually have content. Anything absent is skipped
   // entirely rather than rendered as an empty shell, and section numbers are
   // assigned from what survives so the sequence never skips.
+  // Accepts a single string or an array of paragraphs. A lone string containing
+  // "\n\n" is split too, since that reads as intent and would otherwise collapse
+  // into one block.
+  const overview = clean(
+    Array.isArray(study.overview) ? study.overview : (study.overview ?? '').split('\n\n'),
+  )
+
   const design = study.technicalDesign
   const designFeatures = clean(design?.coreFeatures)
   const designChallenges = (design?.challenges ?? []).filter((c) => hasText(c.description))
@@ -280,10 +287,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
 
         {/* ── Overview ───────────────────────────────────────────────────────── */}
 
-        {hasText(study.overview) && (
+        {overview.length > 0 && (
           <>
             <SectionHeader index={++section} title="Overview" />
-            <p className="text-sm leading-7 text-white/60 md:text-base">{study.overview}</p>
+            <div className="space-y-5">
+              {overview.map((paragraph, i) => (
+                <p key={i} className="text-sm leading-7 text-white/60 md:text-base">
+                  {paragraph}
+                </p>
+              ))}
+            </div>
           </>
         )}
 

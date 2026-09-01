@@ -20,6 +20,14 @@ const nextConfig: NextConfig = {
         destination: `/${RESUME_FILE}`,
         permanent: true,
       },
+      // Case study removed (it overlapped the LED Control Panel and Smart
+      // Environment Dashboard studies); the URL is indexed, so send it to the
+      // projects listing rather than letting it 404.
+      {
+        source: '/projects/embedded-systems-portfolio',
+        destination: '/#projects',
+        permanent: true,
+      },
     ]
   },
 }

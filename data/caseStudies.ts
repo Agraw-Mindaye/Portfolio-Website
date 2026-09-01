@@ -82,7 +82,12 @@ export type CaseStudy = {
   heroImageSrc?: string
   codeUrl?: string
   demoUrl?: string
-  overview?: string
+  /**
+   * One paragraph, or several. Pass an array for multi-paragraph copy — a
+   * single string with embedded newlines will collapse to one block, since the
+   * rendered element uses normal whitespace handling.
+   */
+  overview?: string | string[]
   technicalDesign?: {
     description?: string
     coreFeatures?: string[]
@@ -236,8 +241,10 @@ export const CASE_STUDIES: Record<string, CaseStudy> = {
     { label: 'Context', value: 'Stukes Defense' },
   ],
   heroImageSrc: '/projects/data_acquisition_platform.jpeg',
-  overview:
-    'A bare-metal firmware platform that acquires inertial and thermal sensor data, encodes it into a self-describing record format, and writes it to removable storage under authenticated encryption. The system is built to log continuously for hours without intervention, survive interruption without corrupting the record, and make tampering with stored data detectable rather than silent.\n\nI joined at first power-on and built the stack as the sole firmware developer: clock and peripheral configuration, sensor drivers written directly against register maps with explicit device validation and error handling, a block-level SPI storage driver implemented from scratch rather than pulled from a vendor example, the encoding and block-assembly pipeline, and the cryptographic layer. The architecture separates drivers, sensor abstraction, encoding, and application flow so the same firmware carries forward across hardware revisions.',
+  overview: [
+    'A bare-metal firmware platform that acquires inertial and thermal sensor data, encodes it into a self-describing record format, and writes it to removable storage under authenticated encryption. The system is built to log continuously for hours without intervention, survive interruption without corrupting the record, and make tampering with stored data detectable rather than silent.',
+    'I joined at first power-on and built the stack as the sole firmware developer: clock and peripheral configuration, sensor drivers written directly against register maps with explicit device validation and error handling, a block-level SPI storage driver implemented from scratch rather than pulled from a vendor example, the encoding and block-assembly pipeline, and the cryptographic layer. The architecture separates drivers, sensor abstraction, encoding, and application flow so the same firmware carries forward across hardware revisions.',
+  ],
   technicalDesign: {
     description:
       'Three design constraints shaped the system. Acquisition had to stay deterministic while storage writes contended for time on the same core, so the sampling path is decoupled from the write path rather than sharing a call stack. The record format had to be self-describing, so a reader can parse a session without out-of-band knowledge of what was logged or in what order. And storage had to be resilient to interruption, since a session that ends unexpectedly still has to leave a readable record behind rather than a truncated one.',

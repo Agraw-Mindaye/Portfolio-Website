@@ -12,29 +12,24 @@ function FeaturedProject({ project }: { project: Project }) {
       className="group block border border-white/15 hover:border-white/30 transition-colors duration-300"
     >
       <div className="grid grid-cols-1 md:grid-cols-[55%_45%]">
-        {/* Image column — first in DOM so it stacks on top on mobile */}
-        <div className="relative min-h-[260px] overflow-hidden border-b border-white/15 bg-white/[0.03] md:order-last md:min-h-0 md:border-b-0 md:border-l md:border-white/15">
-          {project.imageSrc ? (
-            <Image
-              src={project.imageSrc}
-              alt={project.title}
-              fill
-              sizes="(max-width: 768px) 100vw, 45vw"
-              className="object-cover opacity-75 transition-opacity duration-300 group-hover:opacity-90"
-            />
-          ) : (
-            <div className="absolute inset-0 flex items-center justify-center transition-colors duration-300 group-hover:bg-white/[0.02]">
-              <span className="font-mono text-[0.65rem] uppercase tracking-[0.18em] text-white/18">
-                Image Placeholder
-              </span>
-            </div>
-          )}
+        {/* Image column — first in DOM so it stacks on top on mobile.
+            Held to 4:3 rather than stretching to the text column's full height:
+            a tall crop of a landscape hardware photo cuts most of the board out
+            of frame. `self-center` keeps it centred when the text runs longer. */}
+        <div className="relative aspect-[4/3] min-h-[260px] self-center overflow-hidden border-b border-white/15 bg-white/[0.03] md:order-last md:min-h-0 md:border-b-0 md:border-l md:border-white/15">
+          <Image
+            src={project.imageSrc}
+            alt={project.title}
+            fill
+            sizes="(max-width: 768px) 100vw, 45vw"
+            className="object-cover opacity-75 transition-opacity duration-300 group-hover:opacity-90"
+          />
         </div>
 
         {/* Text column — second in DOM, ordered first on desktop */}
         <div className="flex flex-col justify-between px-8 py-10 md:order-first md:px-12 md:py-14">
           <div>
-            <p className="font-mono text-[0.70rem] uppercase tracking-[0.20em] text-white/40">
+            <p className="font-mono text-[0.70rem] uppercase tracking-[0.20em] text-white/55">
               Featured Project
             </p>
 
@@ -42,12 +37,16 @@ function FeaturedProject({ project }: { project: Project }) {
               {project.title}
             </h3>
 
-            <p className="mt-2 font-mono text-[0.70rem] uppercase tracking-[0.18em] text-white/40">
+            <p className="mt-2 font-mono text-[0.70rem] uppercase tracking-[0.18em] text-white/55">
               {project.type}
             </p>
 
             <div className="mt-8 border-l border-white/15 pl-5">
-              <p className="text-sm leading-7 text-white/65 md:text-base">{project.summary}</p>
+              {/* Falls back to `description` so promoting any project to the
+                  featured slot can never render an empty block. */}
+              <p className="text-sm leading-7 text-white/65 md:text-base">
+                {project.summary ?? project.description}
+              </p>
             </div>
 
             <div className="mt-8 flex flex-wrap gap-2">
@@ -97,26 +96,18 @@ function ProjectCard({ project }: { project: Project }) {
     >
       {/* Thumbnail */}
       <div className="relative aspect-video overflow-hidden bg-white/[0.03]">
-        {project.imageSrc ? (
-          <Image
-            src={project.imageSrc}
-            alt={project.title}
-            fill
-            sizes="(max-width: 768px) 100vw, 33vw"
-            className="object-cover opacity-70 transition-opacity duration-300 group-hover:opacity-90"
-          />
-        ) : (
-          <div className="absolute inset-0 flex items-center justify-center transition-colors duration-300 group-hover:bg-white/[0.02]">
-            <span className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-white/18">
-              Placeholder
-            </span>
-          </div>
-        )}
+        <Image
+          src={project.imageSrc}
+          alt={project.title}
+          fill
+          sizes="(max-width: 768px) 100vw, 33vw"
+          className="object-cover opacity-70 transition-opacity duration-300 group-hover:opacity-90"
+        />
       </div>
 
       {/* Card body */}
       <div className="px-6 py-6 md:px-7 md:py-7">
-        <p className="font-mono text-[0.67rem] uppercase tracking-[0.18em] text-white/38">
+        <p className="font-mono text-[0.67rem] uppercase tracking-[0.18em] text-white/55">
           {project.type}
         </p>
 
@@ -157,8 +148,8 @@ export default function Work() {
           </h2>
           <div className="mt-6 border-l border-white/15 pl-5">
             <p className="max-w-2xl text-sm leading-7 text-white/55 md:text-base">
-              A selection of engineering projects spanning firmware development, embedded systems,
-              and controls. Each project links to a detailed case study.
+              Bare-metal firmware on real hardware — what I built, how it was verified, and where
+              it broke along the way. Each project has a full case study.
             </p>
           </div>
         </div>
