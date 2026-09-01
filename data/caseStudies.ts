@@ -10,11 +10,70 @@ export type Challenge = {
   description: string
 }
 
+/** A measured result from bench work. Never estimated — see the note below. */
+export type Measurement = {
+  label: string // "ISR latency"
+  value: string // "4.2 µs"
+  method?: string // "logic analyzer, 100 samples"
+}
+
+/**
+ * A text excerpt. Graphical PLC languages (ladder, FBD) are not text — those
+ * belong in `figures`.
+ *
+ * `language` accepts any Shiki language id plus the aliases in CodeBlock;
+ * Structured Text ('st' / 'structured-text') maps to Pascal. An unrecognized
+ * value degrades to unhighlighted text rather than failing the build.
+ */
+export type CodeExcerpt = {
+  title: string // "Timer ISR — sample trigger"
+  language: string // "c", "st", "python"
+  code: string
+  caption: string // why this excerpt matters
+  sourceUrl?: string // deep link to the line range on GitHub
+}
+
+export type Figure = {
+  src: string
+  alt: string
+  caption: string
+  kind: 'block' | 'state' | 'schematic' | 'capture' | 'photo'
+  /**
+   * Intrinsic pixel dimensions. Optional, and only needed when the image isn't
+   * roughly 16:9 — a tall wiring diagram or ladder rung would otherwise be
+   * letterboxed inside the default aspect box. Pass the real dimensions and the
+   * frame follows the image.
+   */
+  width?: number
+  height?: number
+}
+
+/**
+ * Tabular data: I/O lists, tag tables, pin assignments, register maps.
+ *
+ * Every row must have the same number of cells as `columns` — mismatches are
+ * dropped at render time rather than producing a ragged table.
+ */
+export type Table = {
+  title: string // "Digital I/O assignments"
+  caption?: string
+  columns: string[] // ["Tag", "Address", "Type", "Description"]
+  rows: string[][]
+}
+
 /**
  * Every content field below the hero is optional. A study renders only the
  * sections it actually has, so an in-progress project reads as a short finished
  * page rather than a template with empty slots. Section numbering is derived at
  * render time, so gaps never produce a "01, 03" sequence.
+ *
+ * `measurements`, `excerpts`, and `figures` are authored from real bench work
+ * and real repos. Leave them absent until that evidence exists — invented
+ * numbers are worse than no numbers.
+ *
+ * Convention (not enforced by the type): a study without measurements doesn't
+ * go in the featured slot. Thermal is a standing exception while its content is
+ * being written; the rule applies from the next featured project onward.
  */
 export type CaseStudy = {
   descriptor: string
@@ -29,6 +88,10 @@ export type CaseStudy = {
     coreFeatures?: string[]
     challenges?: Challenge[]
   }
+  measurements?: Measurement[]
+  figures?: Figure[]
+  tables?: Table[]
+  excerpts?: CodeExcerpt[]
   outcomes?: {
     results?: string[]
     techStack?: string[]

@@ -2,6 +2,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
+import CodeBlock from '@/components/CodeBlock'
 import { PROJECTS } from '@/data/projects'
 import { getCaseStudy } from '@/data/caseStudies'
 
@@ -129,6 +130,13 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
   const designChallenges = (design?.challenges ?? []).filter((c) => hasText(c.description))
   const hasDesign = hasText(design?.description) || designFeatures.length > 0 || designChallenges.length > 0
 
+  const measurements = study.measurements ?? []
+  const figures = study.figures ?? []
+  const excerpts = study.excerpts ?? []
+  // A table with headers but no usable rows would render as an empty shell.
+  const tables = (study.tables ?? []).filter(
+    (t) => t.columns.length > 0 && t.rows.some((row) => row.length === t.columns.length),
+  )
 
   const results = clean(study.outcomes?.results)
   const techStack = clean(study.outcomes?.techStack)
@@ -253,13 +261,16 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           {/* Hero image */}
           {study.heroImageSrc && (
             <div className="mt-12">
-              <div className="relative aspect-video overflow-hidden">
+              {/* `contain` rather than `cover`: hardware photos aren't shot to a
+                  fixed ratio, and cropping one to 16:9 cuts off the board the
+                  image exists to show. The panel background fills the letterbox. */}
+              <div className="relative aspect-video overflow-hidden border border-white/12 bg-white/[0.02]">
                 <Image
                   src={study.heroImageSrc}
                   alt={project.title}
                   fill
-                  sizes="100vw"
-                  className="object-cover"
+                  sizes="(min-width: 1024px) 64rem, 100vw"
+                  className="object-contain"
                   priority
                 />
               </div>
@@ -307,9 +318,160 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
           </>
         )}
 
+        {/* ── Measurements ───────────────────────────────────────────────────── */}
 
+        {measurements.length > 0 && (
+          <>
+            <SectionHeader index={++section} title="Measurements" />
+            <dl className="grid grid-cols-1 gap-px border border-white/12 bg-white/10 sm:grid-cols-2 lg:grid-cols-3">
+              {measurements.map((m) => (
+                <div key={m.label} className="bg-background px-6 py-6">
+                  <dt className="font-mono text-[0.62rem] uppercase tracking-[0.18em] text-white/55">
+                    {m.label}
+                  </dt>
+                  <dd className="mt-2 text-2xl font-semibold tracking-tight text-white">
+                    {m.value}
+                  </dd>
+                  {m.method && (
+                    <p className="mt-2 text-xs leading-5 text-white/55">{m.method}</p>
+                  )}
+                </div>
+              ))}
+            </dl>
+          </>
+        )}
 
+        {/* ── Figures ────────────────────────────────────────────────────────── */}
 
+        {figures.length > 0 && (
+          <>
+            <SectionHeader index={++section} title="Diagrams" />
+            <div className="space-y-12">
+              {figures.map((fig) => (
+                <figure key={fig.src}>
+                  {/* Defaults to 16:9; a figure that declares its own dimensions
+                      (a tall wiring diagram, a ladder rung) keeps its real shape
+                      instead of being letterboxed. */}
+                  <div className="relative overflow-hidden border border-white/12 bg-white/[0.02]">
+                    <Image
+                      src={fig.src}
+                      alt={fig.alt}
+                      width={fig.width ?? 1600}
+                      height={fig.height ?? 900}
+                      sizes="(min-width: 1024px) 64rem, 100vw"
+                      className="mx-auto h-auto w-full"
+                      style={
+                        fig.width && fig.height
+                          ? { maxWidth: `${fig.width}px` }
+                          : undefined
+                      }
+                    />
+                  </div>
+                  <figcaption className="mt-3 text-sm leading-6 text-white/55">
+                    {fig.caption}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* ── Tables ─────────────────────────────────────────────────────────── */}
+
+        {tables.length > 0 && (
+          <>
+            <SectionHeader index={++section} title="Reference" />
+            <div className="space-y-12">
+              {tables.map((table) => (
+                <div key={table.title}>
+                  <h3 className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-white/55">
+                    {table.title}
+                  </h3>
+
+                  {/* Scrolls within its own box so a wide I/O list never forces
+                      the page itself to scroll sideways on mobile. */}
+                  <div className="mt-4 overflow-x-auto border border-white/12">
+                    <table className="w-full min-w-[36rem] border-collapse text-left">
+                      <thead>
+                        <tr className="border-b border-white/12 bg-white/[0.02]">
+                          {table.columns.map((col) => (
+                            <th
+                              key={col}
+                              scope="col"
+                              className="px-4 py-3 font-mono text-[0.62rem] font-normal uppercase tracking-[0.16em] text-white/55"
+                            >
+                              {col}
+                            </th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {table.rows
+                          // A ragged row would silently shift every cell after
+                          // it under the wrong heading, so drop it instead.
+                          .filter((row) => row.length === table.columns.length)
+                          .map((row, i) => (
+                            <tr
+                              key={i}
+                              className="border-b border-white/8 last:border-b-0"
+                            >
+                              {row.map((cell, j) => (
+                                <td
+                                  key={j}
+                                  className={`px-4 py-3 align-top text-sm leading-6 ${
+                                    j === 0
+                                      ? 'font-mono text-[0.75rem] text-white/80'
+                                      : 'text-white/65'
+                                  }`}
+                                >
+                                  {cell}
+                                </td>
+                              ))}
+                            </tr>
+                          ))}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {table.caption && (
+                    <p className="mt-3 text-sm leading-6 text-white/55">{table.caption}</p>
+                  )}
+                </div>
+              ))}
+            </div>
+          </>
+        )}
+
+        {/* ── Code ───────────────────────────────────────────────────────────── */}
+
+        {excerpts.length > 0 && (
+          <>
+            <SectionHeader index={++section} title="Code" />
+            <div className="space-y-10">
+              {excerpts.map((ex) => (
+                <div key={ex.title}>
+                  <div className="flex flex-wrap items-baseline justify-between gap-3">
+                    <h3 className="font-mono text-[0.68rem] uppercase tracking-[0.18em] text-white/55">
+                      {ex.title}
+                    </h3>
+                    {ex.sourceUrl && (
+                      <a
+                        href={ex.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-mono text-[0.62rem] uppercase tracking-[0.16em] text-white/55 transition-colors duration-200 hover:text-white/80"
+                      >
+                        View on GitHub
+                      </a>
+                    )}
+                  </div>
+                  <CodeBlock code={ex.code} language={ex.language} />
+                  <p className="mt-3 text-sm leading-6 text-white/55">{ex.caption}</p>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
 
         {/* ── Outcomes ───────────────────────────────────────────────────────── */}
 
