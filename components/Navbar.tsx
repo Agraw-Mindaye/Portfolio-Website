@@ -3,6 +3,8 @@
 import { useState } from 'react'
 import { usePathname, useRouter } from 'next/navigation'
 
+import { RESUME_URL } from '@/lib/site'
+
 const links = [
   { id: 'home', label: 'Home', sectionId: 'home' },
   { id: 'about', label: 'About', sectionId: 'about' },
@@ -62,7 +64,10 @@ export default function Navbar() {
                       ? 'text-white/80'
                       : hoveredLink === id
                         ? 'text-white'
-                        : 'text-white/25'
+                        : // Transient dim-siblings hover state, not a resting
+                          // value — the resting state above is white/80, so this
+                          // stays low to keep the effect legible.
+                          'text-white/35'
                   }`}
                 >
                   {label}
@@ -76,7 +81,7 @@ export default function Navbar() {
               onMouseLeave={() => setHoveredLink(null)}
             >
               <a
-                href="Agraw_Mindaye_Resume.pdf"
+                href={RESUME_URL}
                 target="_blank"
                 rel="noopener noreferrer"
                 className={`font-mono text-xs uppercase tracking-widest transition-colors duration-200 border rounded-md px-4 py-1.5 ${
@@ -85,7 +90,7 @@ export default function Navbar() {
                     : 'text-white/80 border-white/30'
                 }`}
               >
-                Resume
+                Résumé
               </a>
             </li>
           </ul>
@@ -136,13 +141,13 @@ export default function Navbar() {
         ))}
 
         <a
-          href="/resume.pdf"
+          href={RESUME_URL}
           target="_blank"
           rel="noopener noreferrer"
           onClick={() => setMenuOpen(false)}
           className="font-mono text-2xl uppercase tracking-widest text-white border border-white/40 rounded-full px-8 py-2"
         >
-          Resume
+          Résumé
         </a>
       </div>
     </>
