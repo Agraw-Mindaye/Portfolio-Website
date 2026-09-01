@@ -54,10 +54,8 @@ const personSchema = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="overflow-x-hidden">
-      <body
-        className={`${inter.variable} font-sans bg-background text-foreground overflow-x-hidden`}
-      >
+    <html lang="en">
+      <body className={`${inter.variable} font-sans bg-background text-foreground`}>
         <main>{children}</main>
         <script
           type="application/ld+json"

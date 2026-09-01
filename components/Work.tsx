@@ -62,7 +62,7 @@ function FeaturedProject({ project }: { project: Project }) {
           </div>
 
           <div className="mt-12">
-            <span className="inline-flex items-center gap-2.5 font-mono text-[0.70rem] uppercase tracking-[0.20em] text-white/45 transition-colors duration-300 group-hover:text-white/75">
+            <span className="inline-flex items-center gap-2.5 font-mono text-[0.70rem] uppercase tracking-[0.20em] text-white/55 transition-colors duration-300 group-hover:text-white/75">
               View Case Study
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -121,7 +121,7 @@ function ProjectCard({ project }: { project: Project }) {
           {project.tags.map((tag) => (
             <span
               key={tag}
-              className="rounded-full border border-white/12 px-2.5 py-1 font-mono text-[0.60rem] uppercase tracking-[0.12em] text-white/45"
+              className="rounded-full border border-white/12 px-2.5 py-1 font-mono text-[0.60rem] uppercase tracking-[0.12em] text-white/55"
             >
               {tag}
             </span>
@@ -160,7 +160,7 @@ export default function Work() {
         {/* Cards grid */}
         {rest.length > 0 && (
           <div className="mt-16 md:mt-20">
-            <p className="mb-8 font-mono text-[0.70rem] uppercase tracking-[0.22em] text-white/35">
+            <p className="mb-8 font-mono text-[0.70rem] uppercase tracking-[0.22em] text-white/55">
               All Projects
             </p>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 md:gap-5">

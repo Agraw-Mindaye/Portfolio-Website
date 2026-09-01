@@ -22,3 +22,9 @@ export const SITE_ROLE = 'Firmware & Controls Engineer'
 
 export const LINKEDIN_URL = 'https://www.linkedin.com/in/agraw-min/'
 export const GITHUB_URL = 'https://github.com/Agraw-Mindaye'
+
+/**
+ * Public contact address. Shown as the fallback when the contact form can't
+ * send, so a broken mail path never leaves someone with no way to reach you.
+ */
+export const CONTACT_EMAIL = 'mindaye.agraw@gmail.com'
