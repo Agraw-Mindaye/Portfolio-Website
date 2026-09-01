@@ -16,6 +16,7 @@ export default function Hero() {
         <p className="mt-16 font-mono text-xs uppercase tracking-[0.35em] text-white/70 sm:text-sm md:text-base">
           Firmware &amp; Controls/Automation Engineer
         </p>
+
       </div>
 
       {/* Scroll CTA */}
@@ -42,7 +43,7 @@ export default function Hero() {
             strokeWidth="1.75"
             strokeLinecap="round"
             strokeLinejoin="round"
-            className="text-white/40 group-hover:text-white/70 transition-colors duration-500 animate-bounce"
+            className="text-white/55 group-hover:text-white/70 transition-colors duration-500 animate-bounce"
           >
             <path d="M12 5v14M5 12l7 7 7-7" />
           </svg>

@@ -72,9 +72,10 @@ export default function Contact() {
             Get in Touch
           </h2>
           <div className="mt-6 border-l border-white/15 pl-5">
+            {/* The site's single availability statement. About and the panel
+                below deliberately don't repeat it. */}
             <p className="max-w-2xl text-sm leading-7 text-white/55 md:text-base">
-              Open to firmware engineering roles, embedded systems consulting, and collaboration on
-              controls or automation projects.
+              Open to firmware and controls engineering roles.
             </p>
           </div>
         </div>
@@ -84,19 +85,19 @@ export default function Contact() {
           <div className="grid grid-cols-1 md:grid-cols-2">
             {/* Left: context + external links */}
             <div className="px-8 py-10 md:border-r md:border-white/20 md:px-10 md:py-12">
-              <p className="font-mono text-[0.70rem] uppercase tracking-[0.20em] text-white/40">
+              <p className="font-mono text-[0.70rem] uppercase tracking-[0.20em] text-white/55">
                 Connect
               </p>
 
               <h3 className="mt-4 text-2xl font-semibold leading-tight text-white md:text-3xl">
-                Let&apos;s Work Together
+                Ask me something specific
               </h3>
 
               <div className="mt-6 border-l border-white/15 pl-5">
                 <p className="text-sm leading-7 text-white/60 md:text-base">
-                  Currently available for new opportunities. Whether it&apos;s a firmware project, a
-                  controls integration challenge, or just a question about something in my work,
-                  I&apos;m happy to hear it.
+                  A role you&apos;re hiring for, a design decision in one of these projects, or a
+                  problem you&apos;re stuck on at the driver level — all fair game. I answer my own
+                  email.
                 </p>
               </div>
 
